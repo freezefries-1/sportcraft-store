@@ -119,7 +119,7 @@ def main():
             "options": names,
             "variants": variants,
             "images": images,
-            "html": clean_html(head["Body (HTML)"]),
+            "html": clean_html(head["Body (HTML)"]).replace("Reel (200m) or Set (12m)", "Reel (200m)"),
         })
 
     # Products added after the Shopify export live in tools/extra_products.json; newest first.
