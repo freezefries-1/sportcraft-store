@@ -15,6 +15,69 @@
   const wa = text => `https://wa.me/${(CFG.whatsappNumber || "").replace(/\D/g, "")}?text=${encodeURIComponent(text)}`;
   const pageUrl = () => (location.protocol.startsWith("http") ? location.href : "");
 
+  // ---------- stock (from the Google Sheet) ----------
+  const STOCK = { loaded: false };
+  const LOW = CFG.lowStockThreshold ?? 3;
+  function stockStatus(v) {
+    if (!STOCK.loaded || !v) return null;
+    const s = v.stock;
+    if (s && (!s.available || s.qty === 0)) return { sold: true, label: "Sold out", cls: "out" };
+    if (s && s.qty != null && s.qty <= LOW) return { sold: false, label: `Only ${s.qty} left`, cls: "low" };
+    return { sold: false, label: "In stock", cls: "in" };
+  }
+  const soldOut = v => !!stockStatus(v)?.sold;
+  const productSoldOut = p => STOCK.loaded && p.variants.length > 0 && p.variants.every(soldOut);
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [], cell = "", quoted = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (quoted) {
+        if (c !== '"') cell += c;
+        else if (text[i + 1] === '"') { cell += '"'; i++; }
+        else quoted = false;
+      } else if (c === '"') quoted = true;
+      else if (c === ",") { row.push(cell); cell = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(cell); rows.push(row); row = []; cell = "";
+      } else cell += c;
+    }
+    if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+
+  async function loadStock() {
+    if (!CFG.stockSheetUrl) return;
+    try {
+      const res = await fetch(CFG.stockSheetUrl, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const rows = parseCsv(await res.text());
+      const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
+      const [ci, cq, ca, cp] = ["id", "quantity", "available", "price"].map(n => head.indexOf(n));
+      if (ci < 0) throw new Error("the sheet has no ID column");
+      const byId = new Map(rows.map(r => [(r[ci] || "").trim(), r]));
+      PRODUCTS.forEach(p => p.variants.forEach(v => {
+        const r = byId.get(v.id);
+        if (!r) return;
+        const q = cq >= 0 ? (r[cq] || "").trim() : "";
+        const a = ca >= 0 ? (r[ca] || "").trim().toLowerCase() : "";
+        v.stock = {
+          qty: q === "" || isNaN(+q) ? null : Math.max(0, Math.floor(+q)),
+          available: !["no", "n", "false", "0", "x"].includes(a),
+        };
+        const price = cp >= 0 ? (r[cp] || "").replace(/[^0-9.]/g, "") : "";
+        if (price !== "" && !isNaN(+price)) v.price = +price;
+      }));
+      STOCK.loaded = true;
+      // Redraw with stock info, but never wipe a half-filled stringing form.
+      if (!location.hash.startsWith("#/stringing")) route();
+    } catch (e) {
+      console.warn("Stock sheet could not be loaded:", e);
+    }
+  }
+
   function priceLabel(p) {
     const prices = [...new Set(p.variants.map(v => v.price).filter(n => n > 0))].sort((a, b) => a - b);
     if (!prices.length) return "Ask for price";
@@ -47,10 +110,11 @@
   }
 
   function cardHtml(p) {
-    return `<a class="card" href="#/p/${encodeURIComponent(p.handle)}">
+    const gone = productSoldOut(p);
+    return `<a class="card ${gone ? "sold" : ""}" href="#/p/${encodeURIComponent(p.handle)}">
       <div class="thumb">
         ${p.images[0] ? `<img loading="lazy" src="${esc(img(p.images[0], 500))}" alt="${esc(p.title)}">` : ""}
-        ${p.preloved ? `<span class="badge">Pre-loved</span>` : ""}
+        ${gone ? `<span class="badge badge-out">Sold out</span>` : p.preloved ? `<span class="badge">Pre-loved</span>` : ""}
       </div>
       <div class="card-body">
         <span class="vendor">${esc(p.vendor)}</span>
@@ -77,6 +141,7 @@
     view.innerHTML = `
       <section class="hero">
         <div>
+          ${CFG.slogan ? `<div class="eyebrow">${esc(CFG.slogan)}</div>` : ""}
           <h1>${esc(CFG.tagline)}</h1>
           <p>Browse what's in stock, then message us on WhatsApp to order or to book a restring.</p>
         </div>
@@ -116,13 +181,13 @@
       view.innerHTML = `<a class="back" href="#/">← Back to shop</a><p class="empty">We couldn't find that item.</p>`;
       return;
     }
-    const first = p.variants.find(v => v.price > 0) || p.variants[0] || { o: [], price: 0, img: "" };
+    const first = p.variants.find(v => v.price > 0 && !soldOut(v)) || p.variants.find(v => v.price > 0) || p.variants[0] || { o: [], price: 0, img: "" };
     let sel = [...first.o];
     let activeImg = p.images[0] || first.img || "";
 
     const match = () => p.variants.find(v => v.o.every((x, i) => x === sel[i]));
     const valuesOf = i => [...new Set(p.variants.map(v => v.o[i]))];
-    const available = (i, val) => p.variants.some(v => v.o[i] === val && v.o.every((x, j) => j === i || x === sel[j]));
+    const available = (i, val) => p.variants.some(v => v.o[i] === val && !soldOut(v) && v.o.every((x, j) => j === i || x === sel[j]));
 
     function orderText(v) {
       const lines = [`Hi ${CFG.businessName}! I'd like to order:`, `• ${p.title}`];
@@ -132,8 +197,14 @@
       return lines.join("\n");
     }
 
+    function restockText() {
+      const opts = p.options.map((name, i) => `${name}: ${sel[i]}`).join(", ");
+      return `Hi ${CFG.businessName}! Will you be getting more of this?\n• ${p.title}${opts ? `\n• ${opts}` : ""}${pageUrl() ? "\n\n" + pageUrl() : ""}`;
+    }
+
     function draw() {
       const v = match();
+      const st = stockStatus(v);
       const thumbs = p.images.length > 1
         ? `<div class="thumbs">${p.images.map(u => `<button class="${u === activeImg ? "on" : ""}" data-img="${esc(u)}" aria-label="View photo"><img loading="lazy" src="${esc(img(u, 150))}" alt=""></button>`).join("")}</div>`
         : "";
@@ -157,9 +228,12 @@
             <span class="vendor">${esc(p.vendor)} · ${esc(p.type)}</span>
             <h1>${esc(p.title)}</h1>
             <div class="price">${v && v.price > 0 ? esc(money(v.price)) : "Ask for price"}</div>
+            ${st ? `<div class="stock ${st.cls}">${esc(st.label)}</div>` : ""}
             ${opts}
             <div class="actions">
-              <a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${esc(wa(orderText(v)))}">Order on WhatsApp</a>
+              ${st && st.sold
+                ? `<a class="btn btn-ghost btn-block" target="_blank" rel="noopener" href="${esc(wa(restockText()))}">Sold out — ask about restock</a>`
+                : `<a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${esc(wa(orderText(v)))}">Order on WhatsApp</a>`}
               ${p.type === "Tennis Strings" ? `<a class="btn btn-ghost btn-block" href="#/stringing?string=${encodeURIComponent(p.handle)}">String my racket with this</a>` : ""}
             </div>
             <p class="note">No payment on this site. Tapping the button opens WhatsApp with your order filled in, and we'll confirm stock and arrange payment there.</p>
@@ -311,4 +385,5 @@
   document.title = `${CFG.businessName} — Stringing, strings and court gear`;
   window.addEventListener("hashchange", route);
   route();
+  loadStock();
 })();

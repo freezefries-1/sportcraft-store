@@ -94,8 +94,10 @@ def main():
         for r in rs:
             if r["Variant Price"] == "":
                 continue
+            values = [pretty(r[f"Option{i + 1} Value"]) for i in range(len(names))]
             variants.append({
-                "o": [pretty(r[f"Option{i + 1} Value"]) for i in range(len(names))],
+                "id": "|".join([handle] + values),
+                "o": values,
                 "price": float(r["Variant Price"]),
                 "img": local(r.get("Variant Image", "")),
             })
