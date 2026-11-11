@@ -101,6 +101,9 @@ def main():
                 "price": float(r["Variant Price"]),
                 "img": local(r.get("Variant Image", "")),
             })
+        # Strings are sold by the reel only; single sets are not listed.
+        if head["Type"].strip() == "Tennis Strings":
+            variants = [v for v in variants if not any(o.lower().startswith("set") for o in v["o"])]
         images = []
         for r in sorted((r for r in rs if r["Image Src"]), key=lambda r: int(r["Image Position"] or 0)):
             if local(r["Image Src"]) not in images:

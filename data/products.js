@@ -1119,30 +1119,12 @@ window.PRODUCTS = [
     "img": "images/Luxilon4gblack.webp"
    },
    {
-    "id": "luxilon-4g-1-25mm|Black|Set (12m)",
-    "o": [
-     "Black",
-     "Set (12m)"
-    ],
-    "price": 20.0,
-    "img": "images/Luxilon4gblack.webp"
-   },
-   {
     "id": "luxilon-4g-1-25mm|Gold|Reel (200m)",
     "o": [
      "Gold",
      "Reel (200m)"
     ],
     "price": 245.0,
-    "img": "images/Luxilon4ggold.jpg"
-   },
-   {
-    "id": "luxilon-4g-1-25mm|Gold|Set (12m)",
-    "o": [
-     "Gold",
-     "Set (12m)"
-    ],
-    "price": 20.0,
     "img": "images/Luxilon4ggold.jpg"
    }
   ],
@@ -1225,46 +1207,6 @@ window.PRODUCTS = [
     "img": "images/Alupowersilver125.webp"
    },
    {
-    "id": "luxilon-alu-power|Silver|Set (12m)|1.25mm",
-    "o": [
-     "Silver",
-     "Set (12m)",
-     "1.25mm"
-    ],
-    "price": 22.0,
-    "img": "images/Alupowersilver125.webp"
-   },
-   {
-    "id": "luxilon-alu-power|Silver|Set (12m)|1.20mm",
-    "o": [
-     "Silver",
-     "Set (12m)",
-     "1.20mm"
-    ],
-    "price": 22.0,
-    "img": "images/Alupowersilver125.webp"
-   },
-   {
-    "id": "luxilon-alu-power|Silver|Set (12m)|1.15mm",
-    "o": [
-     "Silver",
-     "Set (12m)",
-     "1.15mm"
-    ],
-    "price": 22.0,
-    "img": "images/Alupowersilver125.webp"
-   },
-   {
-    "id": "luxilon-alu-power|Silver|Set (12m)|1.10mm",
-    "o": [
-     "Silver",
-     "Set (12m)",
-     "1.10mm"
-    ],
-    "price": 22.0,
-    "img": "images/Alupowersilver125.webp"
-   },
-   {
     "id": "luxilon-alu-power|Ocean Blue|Reel (200m)|1.25mm",
     "o": [
      "Ocean Blue",
@@ -1272,16 +1214,6 @@ window.PRODUCTS = [
      "1.25mm"
     ],
     "price": 260.0,
-    "img": "images/Alupoweroceanblue.jpg"
-   },
-   {
-    "id": "luxilon-alu-power|Ocean Blue|Set (12m)|1.25mm",
-    "o": [
-     "Ocean Blue",
-     "Set (12m)",
-     "1.25mm"
-    ],
-    "price": 22.0,
     "img": "images/Alupoweroceanblue.jpg"
    },
    {
@@ -1295,16 +1227,6 @@ window.PRODUCTS = [
     "img": "images/Alupowerblack.webp"
    },
    {
-    "id": "luxilon-alu-power|Black|Set (12m)|1.25mm",
-    "o": [
-     "Black",
-     "Set (12m)",
-     "1.25mm"
-    ],
-    "price": 22.0,
-    "img": "images/Alupowerblack.webp"
-   },
-   {
     "id": "luxilon-alu-power|Blue|Reel (200m)|1.25mm",
     "o": [
      "Blue",
@@ -1312,16 +1234,6 @@ window.PRODUCTS = [
      "1.25mm"
     ],
     "price": 260.0,
-    "img": "images/Alupowerblue.webp"
-   },
-   {
-    "id": "luxilon-alu-power|Blue|Set (12m)|1.25mm",
-    "o": [
-     "Blue",
-     "Set (12m)",
-     "1.25mm"
-    ],
-    "price": 22.0,
     "img": "images/Alupowerblue.webp"
    }
   ],
@@ -1355,30 +1267,12 @@ window.PRODUCTS = [
     "img": ""
    },
    {
-    "id": "solinco-mach-10|1.20mm|Set (12m)",
-    "o": [
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": ""
-   },
-   {
     "id": "solinco-mach-10|1.15mm|Reel (200m)",
     "o": [
      "1.15mm",
      "Reel (200m)"
     ],
     "price": 170.0,
-    "img": ""
-   },
-   {
-    "id": "solinco-mach-10|1.15mm|Set (12m)",
-    "o": [
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": ""
    }
   ],
@@ -1410,30 +1304,12 @@ window.PRODUCTS = [
     "img": ""
    },
    {
-    "id": "solinco-tour-bite|1.20mm|Set (12m)",
-    "o": [
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": ""
-   },
-   {
     "id": "solinco-tour-bite|1.15mm|Reel (200m)",
     "o": [
      "1.15mm",
      "Reel (200m)"
     ],
     "price": 160.0,
-    "img": ""
-   },
-   {
-    "id": "solinco-tour-bite|1.15mm|Set (12m)",
-    "o": [
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": ""
    }
   ],
@@ -1456,15 +1332,6 @@ window.PRODUCTS = [
   ],
   "variants": [
    {
-    "id": "head-lynx-tour-1-25mm|Champagne|Set (12m)",
-    "o": [
-     "Champagne",
-     "Set (12m)"
-    ],
-    "price": 16.0,
-    "img": "images/RacketHaus_-_Head_Lynx_Tour_17g___1.25mm_Champaign.webp"
-   },
-   {
     "id": "head-lynx-tour-1-25mm|Champagne|Reel (200m)",
     "o": [
      "Champagne",
@@ -1472,15 +1339,6 @@ window.PRODUCTS = [
     ],
     "price": 175.0,
     "img": "images/RacketHaus_-_Head_Lynx_Tour_17g___1.25mm_Champaign.webp"
-   },
-   {
-    "id": "head-lynx-tour-1-25mm|Grey|Set (12m)",
-    "o": [
-     "Grey",
-     "Set (12m)"
-    ],
-    "price": 16.0,
-    "img": "images/headlynxtourgrey.jpg"
    },
    {
     "id": "head-lynx-tour-1-25mm|Grey|Reel (200m)",
@@ -1548,66 +1406,6 @@ window.PRODUCTS = [
    "Size"
   ],
   "variants": [
-   {
-    "id": "poly-star-classic|White|1.20mm|Set (12m)",
-    "o": [
-     "White",
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 10.0,
-    "img": "images/IMG-4009.jpg"
-   },
-   {
-    "id": "poly-star-classic|Beige|1.20mm|Set (12m)",
-    "o": [
-     "Beige",
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 10.0,
-    "img": "images/IMG-4010.jpg"
-   },
-   {
-    "id": "poly-star-classic|White|1.25mm|Set (12m)",
-    "o": [
-     "White",
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 10.0,
-    "img": "images/IMG-4009.jpg"
-   },
-   {
-    "id": "poly-star-classic|White|1.30mm|Set (12m)",
-    "o": [
-     "White",
-     "1.30mm",
-     "Set (12m)"
-    ],
-    "price": 10.0,
-    "img": "images/IMG-4009.jpg"
-   },
-   {
-    "id": "poly-star-classic|Beige|1.25mm|Set (12m)",
-    "o": [
-     "Beige",
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 10.0,
-    "img": "images/IMG-4010.jpg"
-   },
-   {
-    "id": "poly-star-classic|Beige|1.30mm|Set (12m)",
-    "o": [
-     "Beige",
-     "1.30mm",
-     "Set (12m)"
-    ],
-    "price": 10.0,
-    "img": "images/IMG-4010.jpg"
-   },
    {
     "id": "poly-star-classic|White|1.20mm|Reel (200m)",
     "o": [
@@ -2197,30 +1995,12 @@ window.PRODUCTS = [
     "img": ""
    },
    {
-    "id": "solinco-confidential-soft|1.20mm|Set (12m)",
-    "o": [
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": ""
-   },
-   {
     "id": "solinco-confidential-soft|1.15mm|Reel (200m)",
     "o": [
      "1.15mm",
      "Reel (200m)"
     ],
     "price": 170.0,
-    "img": ""
-   },
-   {
-    "id": "solinco-confidential-soft|1.15mm|Set (12m)",
-    "o": [
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": ""
    }
   ],
@@ -2253,30 +2033,12 @@ window.PRODUCTS = [
     "img": "images/SolincoConfidential.jpg"
    },
    {
-    "id": "solinco-confidential|1.20mm|Set (12m)",
-    "o": [
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 13.0,
-    "img": "images/SolincoConfidential.jpg"
-   },
-   {
     "id": "solinco-confidential|1.15mm|Reel (200m)",
     "o": [
      "1.15mm",
      "Reel (200m)"
     ],
     "price": 160.0,
-    "img": "images/SolincoConfidential.jpg"
-   },
-   {
-    "id": "solinco-confidential|1.15mm|Set (12m)",
-    "o": [
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 13.0,
     "img": "images/SolincoConfidential.jpg"
    }
   ],
@@ -2307,30 +2069,12 @@ window.PRODUCTS = [
     "img": ""
    },
    {
-    "id": "volkl-cyclone|1.25mm|Set (12m)",
-    "o": [
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 8.0,
-    "img": ""
-   },
-   {
     "id": "volkl-cyclone|1.20mm|Reel (200m)",
     "o": [
      "1.20mm",
      "Reel (200m)"
     ],
     "price": 105.0,
-    "img": ""
-   },
-   {
-    "id": "volkl-cyclone|1.20mm|Set (12m)",
-    "o": [
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 8.0,
     "img": ""
    }
   ],
@@ -2363,15 +2107,6 @@ window.PRODUCTS = [
     "img": ""
    },
    {
-    "id": "solinco-hyper-g|1.25mm|Set (12m)",
-    "o": [
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 13.0,
-    "img": ""
-   },
-   {
     "id": "solinco-hyper-g|1.20mm|Reel (200m)",
     "o": [
      "1.20mm",
@@ -2381,30 +2116,12 @@ window.PRODUCTS = [
     "img": ""
    },
    {
-    "id": "solinco-hyper-g|1.20mm|Set (12m)",
-    "o": [
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 13.0,
-    "img": ""
-   },
-   {
     "id": "solinco-hyper-g|1.15mm|Reel (200m)",
     "o": [
      "1.15mm",
      "Reel (200m)"
     ],
     "price": 160.0,
-    "img": ""
-   },
-   {
-    "id": "solinco-hyper-g|1.15mm|Set (12m)",
-    "o": [
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 13.0,
     "img": ""
    }
   ],
@@ -2439,16 +2156,6 @@ window.PRODUCTS = [
     "img": "images/YonexPTPYellow.jpg"
    },
    {
-    "id": "yonex-poly-tour-pro|Yellow|1.25mm|Set (12m)",
-    "o": [
-     "Yellow",
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": "images/YonexPTPYellow.jpg"
-   },
-   {
     "id": "yonex-poly-tour-pro|Yellow|1.20mm|Reel (200m)",
     "o": [
      "Yellow",
@@ -2456,16 +2163,6 @@ window.PRODUCTS = [
      "Reel (200m)"
     ],
     "price": 165.0,
-    "img": "images/YonexPTPYellow.jpg"
-   },
-   {
-    "id": "yonex-poly-tour-pro|Yellow|1.20mm|Set (12m)",
-    "o": [
-     "Yellow",
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": "images/YonexPTPYellow.jpg"
    },
    {
@@ -2479,16 +2176,6 @@ window.PRODUCTS = [
     "img": "images/YonexPTPYellow.jpg"
    },
    {
-    "id": "yonex-poly-tour-pro|Yellow|1.15mm|Set (12m)",
-    "o": [
-     "Yellow",
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": "images/YonexPTPYellow.jpg"
-   },
-   {
     "id": "yonex-poly-tour-pro|Black|1.25mm|Reel (200m)",
     "o": [
      "Black",
@@ -2496,16 +2183,6 @@ window.PRODUCTS = [
      "Reel (200m)"
     ],
     "price": 165.0,
-    "img": "images/YonexPTPBlack.jpg"
-   },
-   {
-    "id": "yonex-poly-tour-pro|Black|1.25mm|Set (12m)",
-    "o": [
-     "Black",
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": "images/YonexPTPBlack.jpg"
    },
    {
@@ -2519,16 +2196,6 @@ window.PRODUCTS = [
     "img": "images/YonexPTPBlack.jpg"
    },
    {
-    "id": "yonex-poly-tour-pro|Black|1.20mm|Set (12m)",
-    "o": [
-     "Black",
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": "images/YonexPTPBlack.jpg"
-   },
-   {
     "id": "yonex-poly-tour-pro|Black|1.15mm|Reel (200m)",
     "o": [
      "Black",
@@ -2536,16 +2203,6 @@ window.PRODUCTS = [
      "Reel (200m)"
     ],
     "price": 165.0,
-    "img": "images/YonexPTPBlack.jpg"
-   },
-   {
-    "id": "yonex-poly-tour-pro|Black|1.15mm|Set (12m)",
-    "o": [
-     "Black",
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": "images/YonexPTPBlack.jpg"
    },
    {
@@ -2559,16 +2216,6 @@ window.PRODUCTS = [
     "img": "images/YonexPTPBlue.jpg"
    },
    {
-    "id": "yonex-poly-tour-pro|Blue|1.25mm|Set (12m)",
-    "o": [
-     "Blue",
-     "1.25mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": "images/YonexPTPBlue.jpg"
-   },
-   {
     "id": "yonex-poly-tour-pro|Blue|1.20mm|Reel (200m)",
     "o": [
      "Blue",
@@ -2579,16 +2226,6 @@ window.PRODUCTS = [
     "img": "images/YonexPTPBlue.jpg"
    },
    {
-    "id": "yonex-poly-tour-pro|Blue|1.20mm|Set (12m)",
-    "o": [
-     "Blue",
-     "1.20mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
-    "img": "images/YonexPTPBlue.jpg"
-   },
-   {
     "id": "yonex-poly-tour-pro|Blue|1.15mm|Reel (200m)",
     "o": [
      "Blue",
@@ -2596,16 +2233,6 @@ window.PRODUCTS = [
      "Reel (200m)"
     ],
     "price": 165.0,
-    "img": "images/YonexPTPBlue.jpg"
-   },
-   {
-    "id": "yonex-poly-tour-pro|Blue|1.15mm|Set (12m)",
-    "o": [
-     "Blue",
-     "1.15mm",
-     "Set (12m)"
-    ],
-    "price": 15.0,
     "img": "images/YonexPTPBlue.jpg"
    }
   ],
