@@ -113,7 +113,7 @@
     return `<a class="card ${gone ? "sold" : ""}" href="#/p/${encodeURIComponent(p.handle)}">
       <div class="thumb">
         ${p.images[0] ? `<img loading="lazy" src="${esc(img(p.images[0], 500))}" alt="${esc(p.title)}">` : ""}
-        ${gone ? `<span class="badge badge-out">Sold out</span>` : p.preloved ? `<span class="badge">Pre-loved</span>` : ""}
+        ${gone ? `<span class="badge badge-out">Sold out</span>` : p.preloved ? `<span class="badge">Pre-loved</span>` : p.isNew ? `<span class="badge badge-new">New</span>` : ""}
       </div>
       <div class="card-body">
         <span class="vendor">${esc(p.vendor)}</span>
@@ -222,7 +222,7 @@
           <div>
             <div class="gallery-main">
               ${activeImg ? `<img src="${esc(img(activeImg, 1000))}" alt="${esc(p.title)}">` : ""}
-              ${p.preloved ? `<span class="badge">Pre-loved</span>` : ""}
+              ${p.preloved ? `<span class="badge">Pre-loved</span>` : p.isNew ? `<span class="badge badge-new">New</span>` : ""}
             </div>
             ${thumbs}
           </div>

@@ -103,6 +103,7 @@ input:focus, select:focus, textarea:focus, .chip:focus-visible, .btn:focus-visib
   font-size: .72rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: .04em;
 }
 .badge-out { background: #2b2f2c; color: #fff; }
+.badge-new { background: var(--green); color: #fff; }
 .card.sold .thumb img { opacity: .45; }
 .card-body { padding: 12px 14px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .vendor { color: var(--muted); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }

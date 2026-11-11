@@ -2,6 +2,7 @@
 window.PRODUCTS = [
  {
   "handle": "rpm-jade",
+  "isNew": true,
   "title": "RPM Jade Elongated 14mm & 16mm Pickleball Paddle",
   "vendor": "RPM",
   "type": "Pickleball Paddles",
