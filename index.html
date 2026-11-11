@@ -14,7 +14,13 @@
   <meta name="theme-color" content="#06370b">
   <link rel="icon" type="image/png" href="assets/icon.png">
   <link rel="apple-touch-icon" href="assets/icon.png">
-  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Browsers keep site files for a while. This stamp changes every five minutes,
+    // so new products and prices show up without a manual refresh.
+    var SITE_V = Math.floor(Date.now() / 300000);
+    document.write('<link rel="stylesheet" href="styles.css?v=' + SITE_V + '">');
+  </script>
+  <noscript><link rel="stylesheet" href="styles.css"></noscript>
 </head>
 <body>
   <header class="site-header">
@@ -40,9 +46,10 @@
     </div>
   </footer>
 
-  <script src="config.js"></script>
-  <script src="data/products.js"></script>
-  <script src="data/stringing.js"></script>
-  <script src="app.js"></script>
+  <script>
+    ["config.js", "data/products.js", "data/stringing.js", "app.js"].forEach(function (f) {
+      document.write('<script src="' + f + '?v=' + SITE_V + '"><\/script>');
+    });
+  </script>
 </body>
 </html>
