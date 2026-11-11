@@ -135,8 +135,14 @@
   function renderGrid() {
     const list = filtered();
     document.getElementById("count").textContent = `${list.length} item${list.length === 1 ? "" : "s"}`;
+    // In the default order, featured products get their own block above the rest.
+    const top = state.sort === "featured" ? list.filter(p => p.featured != null) : [];
+    const cards = top.length && top.length < list.length
+      ? `<h2 class="grid-head">Featured</h2>${top.map(cardHtml).join("")}
+         <h2 class="grid-head grid-head-rest">More products</h2>${list.slice(top.length).map(cardHtml).join("")}`
+      : list.map(cardHtml).join("");
     document.getElementById("grid").innerHTML = list.length
-      ? list.map(cardHtml).join("")
+      ? cards
       : `<p class="empty">Nothing matches that search. Try another word, or message us — we may have it.</p>`;
   }
 

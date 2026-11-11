@@ -90,6 +90,8 @@ input:focus, select:focus, textarea:focus, .chip:focus-visible, .btn:focus-visib
 
 /* Grid */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+.grid-head { grid-column: 1 / -1; margin: 0; font-size: 1.15rem; color: var(--green); }
+.grid-head-rest { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; text-decoration: none; display: flex; flex-direction: column;
