@@ -2,7 +2,6 @@
   const CFG = window.SHOP_CONFIG;
   const PRODUCTS = window.PRODUCTS || [];
   const view = document.getElementById("view");
-  const STRINGS = PRODUCTS.filter(p => p.type === "Tennis Strings");
   const CAT_ORDER = ["Tennis Strings", "Tennis Rackets", "Tennis Balls", "Pickleball Paddles", "Pickleball Bags", "Accessories", "Apparel"];
 
   // ---------- helpers ----------
@@ -234,7 +233,7 @@
               ${st && st.sold
                 ? `<a class="btn btn-ghost btn-block" target="_blank" rel="noopener" href="${esc(wa(restockText()))}">Sold out — ask about restock</a>`
                 : `<a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${esc(wa(orderText(v)))}">Order on WhatsApp</a>`}
-              ${p.type === "Tennis Strings" ? `<a class="btn btn-ghost btn-block" href="#/stringing?string=${encodeURIComponent(p.handle)}">String my racket with this</a>` : ""}
+              ${p.type === "Tennis Strings" ? `<a class="btn btn-ghost btn-block" href="#/stringing?string=${encodeURIComponent(p.handle)}">String my racket with this${restringFor(p.handle) ? ` — ${esc(money(restringFor(p.handle).price))}` : ""}</a>` : ""}
             </div>
             <p class="note">No payment on this site. Tapping the button opens WhatsApp with your order filled in, and we'll confirm stock and arrange payment there.</p>
             ${p.html ? `<div class="desc">${p.html}</div>` : ""}
@@ -261,14 +260,38 @@
     window.scrollTo(0, 0);
   }
 
-  // ---------- stringing form ----------
+  // ---------- stringing: booking form + price list ----------
+  const SP = window.STRINGING || { groups: [], extras: [] };
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const RESTRINGS = SP.groups.flatMap(g => g.items.map(([name, gauges, price, handle, note]) =>
+    ({ id: slug(name), name, gauges, price, handle: handle || "", note: note || "", group: g.name })));
+  const restringFor = handle => RESTRINGS.find(r => r.handle === handle);
+
   function renderStringing(params) {
-    const pre = params.get("string") || "";
-    const stringOptions = sel => STRINGS.map(s => `<option value="${esc(s.handle)}" ${s.handle === sel ? "selected" : ""}>${esc(s.title)}</option>`).join("");
+    const pre = (restringFor(params.get("string")) || RESTRINGS.find(r => r.id === params.get("string")) || {}).id || "";
+    const label = r => `${r.name}${r.note ? ` (${r.note})` : ""} — ${money(r.price)}`;
+    const stringOptions = sel => SP.groups.map(g => `<optgroup label="${esc(g.name)}">${
+      g.items.map(([name]) => RESTRINGS.find(r => r.id === slug(name))).map(r =>
+        `<option value="${esc(r.id)}" ${r.id === sel ? "selected" : ""}>${esc(label(r))}</option>`).join("")}</optgroup>`).join("");
+    const priceRows = SP.groups.map(g => `
+      <section class="pl-group" data-group>
+        <h3>${esc(g.name)}</h3>
+        ${g.items.map(([name]) => RESTRINGS.find(r => r.id === slug(name))).map(r => `
+          <button type="button" class="pl-row" data-pick="${esc(r.id)}" data-text="${esc((r.name + " " + g.name).toLowerCase())}">
+            <span class="pl-name">${esc(r.name)}${r.note ? ` <em>${esc(r.note)}</em>` : ""}<small>${esc(r.gauges.join(", "))}</small></span>
+            <span class="pl-price">${esc(money(r.price))}</span>
+          </button>`).join("")}
+      </section>`).join("");
+    const extraRows = (SP.extras || []).map(g => `
+      <section class="pl-group">
+        <h3>${esc(g.name)}</h3>
+        ${g.items.map(([name, price]) => `<div class="pl-row static"><span class="pl-name">${esc(name)}</span><span class="pl-price">${esc(price)}</span></div>`).join("")}
+      </section>`).join("");
+
     view.innerHTML = `
       <div class="form-page">
-        <h1>Book a stringing</h1>
-        <p>Fill this in and tap send. WhatsApp opens with your order written out, and we'll reply to confirm drop-off and timing.</p>
+        <h1>Racket stringing</h1>
+        <p>Prices are per racket and include the string and labour. Fill in the form and tap send — WhatsApp opens with your order written out, and we'll reply to confirm drop-off and timing. <a href="#/stringing" id="to-prices">See the full price list</a>.</p>
         <form class="panel" id="sform">
           <div class="field"><label for="f-name">Your name</label><input id="f-name" autocomplete="name" required></div>
           <div class="field"><label for="f-racket">Racket <span class="hint">(brand and model)</span></label><input id="f-racket" placeholder="e.g. Babolat Pure Aero 100" required></div>
@@ -276,69 +299,99 @@
             <label for="f-string">String</label>
             <select id="f-string">
               <option value="">Choose a string…</option>
-              ${stringOptions(pre)}
-              <option value="__own">I'll bring my own string</option>
+              <option value="__own">I'll bring my own string — ${esc(money(SP.bringYourOwn))}</option>
               <option value="__help">Not sure — please recommend one</option>
+              ${stringOptions(pre)}
             </select>
           </div>
-          <div class="row" id="f-string-opts" hidden></div>
+          <div class="field" id="f-gauge-wrap" hidden><label for="f-gauge">Gauge</label><select id="f-gauge"></select></div>
           <div class="field" id="f-own-wrap" hidden><label for="f-own">Which string are you bringing?</label><input id="f-own" placeholder="e.g. Babolat RPM Blast 1.25"></div>
           <label class="check"><input type="checkbox" id="f-hybrid"> Hybrid — use a different string for the crosses</label>
           <div class="field" id="f-cross-wrap" hidden>
             <label for="f-cross">Cross string</label>
-            <select id="f-cross"><option value="">Choose a string…</option>${stringOptions("")}<option value="__own">I'll bring my own string</option></select>
+            <select id="f-cross"><option value="">Choose a string…</option><option value="__own">I'll bring my own string</option>${stringOptions("")}</select>
           </div>
           <div class="row">
             <div class="field"><label for="f-mains">Tension <span class="hint">(lbs)</span></label><input id="f-mains" type="number" inputmode="decimal" min="30" max="70" step="0.5" placeholder="52" required></div>
             <div class="field"><label for="f-crosses">Crosses <span class="hint">(if different)</span></label><input id="f-crosses" type="number" inputmode="decimal" min="30" max="70" step="0.5" placeholder="Same"></div>
           </div>
           <div class="field"><label for="f-qty">Number of rackets</label><input id="f-qty" type="number" inputmode="numeric" min="1" max="20" value="1" required></div>
-          <div class="field"><label for="f-notes">Notes <span class="hint">(optional)</span></label><textarea id="f-notes" placeholder="When you need it by, grip changes, anything else"></textarea></div>
+          <label class="check"><input type="checkbox" id="f-delivery"> Pick-up and drop-off delivery (+${esc(money(SP.delivery))})</label>
+          <div class="field"><label for="f-notes">Notes <span class="hint">(optional)</span></label><textarea id="f-notes" placeholder="String colour, when you need it by, grip changes, anything else"></textarea></div>
           <div class="estimate" id="f-estimate" hidden></div>
           <button class="btn btn-wa btn-block" type="submit">Send order on WhatsApp</button>
         </form>
+
+        <section class="pricelist" id="prices">
+          <h2>Restringing price list</h2>
+          <p class="note">Per racket, string and labour included. Tap a string to put it in the form.${SP.updated ? ` Updated ${esc(SP.updated)}.` : ""}</p>
+          <div class="pl-group">
+            <div class="pl-row static"><span class="pl-name">Bring your own string<small>labour only</small></span><span class="pl-price">${esc(money(SP.bringYourOwn))}</span></div>
+            <div class="pl-row static"><span class="pl-name">Delivery<small>pick-up and drop-off</small></span><span class="pl-price">${esc(money(SP.delivery))}</span></div>
+          </div>
+          <input class="search" id="pl-q" type="search" placeholder="Search strings…" aria-label="Search the price list">
+          ${priceRows}
+          <p class="empty" id="pl-empty" hidden>No string matches that search. Message us — we may be able to get it.</p>
+          ${extraRows}
+        </section>
       </div>`;
 
     const $ = id => document.getElementById(id);
-    const strSel = $("f-string"), optsBox = $("f-string-opts");
-    const chosen = () => STRINGS.find(s => s.handle === strSel.value);
+    const strSel = $("f-string");
+    const chosen = () => RESTRINGS.find(r => r.id === strSel.value);
 
-    function drawOpts() {
-      const s = chosen();
-      // "Size" on strings means reel vs set, which doesn't apply to a restring.
-      const opts = s ? s.options.map((n, i) => [n, i]).filter(([n]) => n !== "Size") : [];
-      optsBox.hidden = !opts.length;
-      optsBox.innerHTML = opts.map(([name, i]) => `
-        <div class="field"><label for="f-o${i}">${esc(name)}</label>
-          <select id="f-o${i}" data-name="${esc(name)}"><option value="">Any</option>${[...new Set(s.variants.map(v => v.o[i]))].map(v => `<option>${esc(v)}</option>`).join("")}</select>
-        </div>`).join("");
+    function drawString() {
+      const r = chosen();
+      const many = r && r.gauges.length > 1;
+      $("f-gauge-wrap").hidden = !r;
+      if (r) $("f-gauge").innerHTML = (many ? `<option value="">Any</option>` : "") + r.gauges.map(g => `<option>${esc(g)}</option>`).join("");
       $("f-own-wrap").hidden = strSel.value !== "__own";
       drawEstimate();
     }
 
     function drawEstimate() {
-      const box = $("f-estimate"), s = chosen();
-      const fee = CFG.stringingLabourFee;
-      if (fee == null) { box.hidden = true; return; }
+      const box = $("f-estimate"), r = chosen();
       const qty = Math.max(1, +$("f-qty").value || 1);
-      const i = s ? s.options.indexOf("Size") : -1;
-      const set = s && i >= 0 ? s.variants.find(v => /set/i.test(v.o[i]) && v.price > 0) : null;
-      box.hidden = false;
-      if (strSel.value === "__own") box.textContent = `Estimate: ${money(fee * qty)} (labour only)`;
-      else if (set && !$("f-hybrid").checked) box.textContent = `Estimate: ${money((fee + set.price) * qty)} (string + labour)`;
-      else box.textContent = `Labour is ${money(fee)} per racket. We'll confirm the string price on WhatsApp.`;
+      const delivery = $("f-delivery").checked ? SP.delivery : 0;
+      const hybrid = $("f-hybrid").checked;
+      const per = strSel.value === "__own" ? SP.bringYourOwn : r ? r.price : null;
+      box.hidden = per == null && !hybrid;
+      if (per == null || hybrid) box.textContent = "We'll confirm the price for this setup on WhatsApp.";
+      else box.textContent = `Estimated total: ${money(per * qty + delivery)}` +
+        ` (${qty} × ${money(per)}${delivery ? ` + ${money(delivery)} delivery` : ""})`;
     }
 
-    strSel.addEventListener("change", drawOpts);
+    strSel.addEventListener("change", drawString);
     $("f-qty").addEventListener("input", drawEstimate);
+    $("f-delivery").addEventListener("change", drawEstimate);
     $("f-hybrid").addEventListener("change", e => { $("f-cross-wrap").hidden = !e.target.checked; drawEstimate(); });
-    drawOpts();
+    drawString();
+
+    $("to-prices").addEventListener("click", e => { e.preventDefault(); $("prices").scrollIntoView({ behavior: "smooth" }); });
+    $("prices").addEventListener("click", e => {
+      const b = e.target.closest("[data-pick]");
+      if (!b) return;
+      strSel.value = b.dataset.pick;
+      drawString();
+      $("sform").scrollIntoView({ behavior: "smooth" });
+    });
+    $("pl-q").addEventListener("input", e => {
+      const q = e.target.value.trim().toLowerCase();
+      let shown = 0;
+      document.querySelectorAll("#prices [data-group]").forEach(g => {
+        let n = 0;
+        g.querySelectorAll("[data-pick]").forEach(row => { const hit = !q || row.dataset.text.includes(q); row.hidden = !hit; if (hit) n++; });
+        g.hidden = !n;
+        shown += n;
+      });
+      $("pl-empty").hidden = shown > 0;
+    });
 
     const stringLabel = (value, own) => {
       if (value === "__own") return "Bringing my own" + (own ? ` (${own})` : "");
       if (value === "__help") return "Please recommend one";
-      const s = STRINGS.find(x => x.handle === value);
-      return s ? s.title : "";
+      const r = RESTRINGS.find(x => x.id === value);
+      return r ? r.name : "";
     };
 
     $("sform").addEventListener("submit", e => {
@@ -346,9 +399,9 @@
       if (!strSel.value) { strSel.focus(); strSel.setCustomValidity("Please choose a string"); strSel.reportValidity(); strSel.setCustomValidity(""); return; }
       const hybrid = $("f-hybrid").checked && $("f-cross").value;
       let main = stringLabel(strSel.value, $("f-own").value.trim());
-      const picks = [...optsBox.querySelectorAll("select")].filter(s => s.value).map(s => `${s.dataset.name} ${s.value}`);
-      if (picks.length) main += ` — ${picks.join(", ")}`;
+      if (chosen() && $("f-gauge").value) main += ` ${$("f-gauge").value}`;
       const mains = $("f-mains").value, crosses = $("f-crosses").value;
+      const est = $("f-estimate");
       const lines = [
         `Hi ${CFG.businessName}! I'd like to book a stringing:`,
         `• Name: ${$("f-name").value.trim()}`,
@@ -357,7 +410,9 @@
         hybrid ? `• Crosses: ${stringLabel($("f-cross").value)}` : null,
         `• Tension: ${crosses && crosses !== mains ? `${mains} lbs mains / ${crosses} lbs crosses` : `${mains} lbs`}`,
         `• Rackets: ${$("f-qty").value}`,
+        $("f-delivery").checked ? `• Delivery: pick-up and drop-off` : null,
         $("f-notes").value.trim() ? `• Notes: ${$("f-notes").value.trim()}` : null,
+        !est.hidden && est.textContent.startsWith("Estimated") ? `• ${est.textContent}` : null,
       ].filter(Boolean);
       window.open(wa(lines.join("\n")), "_blank", "noopener");
     });

@@ -14,7 +14,4 @@ window.SHOP_CONFIG = {
 
   // Show "Only N left" when the quantity is at or below this number. Set to 0 to never show numbers.
   lowStockThreshold: 3,
-
-  // Stringing labour fee per racket. Leave as null to hide price estimates on the stringing form.
-  stringingLabourFee: null,
 };
