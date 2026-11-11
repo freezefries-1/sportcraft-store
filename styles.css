@@ -53,6 +53,9 @@ nav a.active { background: rgba(255,255,255,.14); opacity: 1; }
 .btn-ghost { background: transparent; color: var(--green); box-shadow: inset 0 0 0 2px var(--green); }
 .btn-ghost:hover { background: rgba(6,55,11,.06); }
 .btn-block { width: 100%; }
+.btn-line { color: #fff; box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); }
+.btn-line:hover { background: rgba(255,255,255,.1); }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* Hero */
 .hero {
@@ -151,7 +154,7 @@ textarea { min-height: 84px; resize: vertical; }
 [hidden] { display: none !important; }
 
 /* Price list */
-.pricelist { margin-top: 44px; scroll-margin-top: 76px; }
+.pricelist { margin-top: 22px; }
 .pricelist h2 { font-size: 1.4rem; }
 .pricelist .search { margin: 14px 0 4px; }
 .pl-group { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin-top: 14px; overflow: hidden; }
@@ -159,16 +162,15 @@ textarea { min-height: 84px; resize: vertical; }
 .pl-row {
   display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%;
   padding: 11px 16px; border: 0; border-top: 1px solid var(--line); background: none;
-  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  font: inherit; color: inherit; text-align: left; cursor: pointer; text-decoration: none;
 }
 .pl-group > .pl-row:first-child { border-top: 0; }
 .pl-row.static { cursor: default; }
-button.pl-row:hover { background: rgba(6,55,11,.05); }
+a.pl-row:hover { background: rgba(6,55,11,.05); }
 .pl-name { font-weight: 600; }
 .pl-name small { display: block; font-weight: 400; color: var(--muted); font-size: .82rem; }
 .pl-name em { font-style: normal; font-weight: 500; color: var(--muted); }
 .pl-price { font-weight: 800; white-space: nowrap; }
-#sform { scroll-margin-top: 76px; }
 .form-page > p a { color: var(--green); font-weight: 600; }
 
 /* Footer */

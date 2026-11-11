@@ -4,6 +4,8 @@ products.csv
 # Upload bundle and local clutter
 sportcraft-site.zip
 stock-sheet.csv
+stringing-sheet.csv
+stringing-test.csv
 stock-test.csv
 .DS_Store
 .claude/

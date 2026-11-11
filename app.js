@@ -144,7 +144,10 @@
           <h1>${esc(CFG.tagline)}</h1>
           <p>Browse what's in stock, then message us on WhatsApp to order or to book a restring.</p>
         </div>
-        <a class="btn btn-ball" href="#/stringing">Book a stringing</a>
+        <div class="hero-actions">
+          <a class="btn btn-ball" href="#/stringing">Book a stringing</a>
+          <a class="btn btn-line" href="#/prices">Restringing prices</a>
+        </div>
       </section>
       <div class="filters">
         <input class="search" id="q" type="search" placeholder="Search strings, paddles, brands…" value="${esc(state.q)}" aria-label="Search products">
@@ -260,27 +263,68 @@
     window.scrollTo(0, 0);
   }
 
-  // ---------- stringing: booking form + price list ----------
-  const SP = window.STRINGING || { groups: [], extras: [] };
+  // ---------- stringing: price list data ----------
+  let SP, RESTRINGS, formTouched = false;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const RESTRINGS = SP.groups.flatMap(g => g.items.map(([name, gauges, price, handle, note]) =>
-    ({ id: slug(name), name, gauges, price, handle: handle || "", note: note || "", group: g.name })));
+  function setStringing(data) {
+    SP = data || { groups: [], extras: [], bringYourOwn: 0, delivery: 0 };
+    RESTRINGS = SP.groups.flatMap(g => g.items.map(([name, gauges, price, handle, note]) =>
+      ({ id: slug(name), name, gauges: gauges || [], price, handle: handle || "", note: note || "", group: g.name })));
+  }
+  setStringing(window.STRINGING);
   const restringFor = handle => RESTRINGS.find(r => r.handle === handle);
+  const groupItems = g => g.items.map(([name]) => RESTRINGS.find(r => r.id === slug(name)));
 
-  function renderStringing(params) {
-    const pre = (restringFor(params.get("string")) || RESTRINGS.find(r => r.id === params.get("string")) || {}).id || "";
-    const label = r => `${r.name}${r.note ? ` (${r.note})` : ""} — ${money(r.price)}`;
-    const stringOptions = sel => SP.groups.map(g => `<optgroup label="${esc(g.name)}">${
-      g.items.map(([name]) => RESTRINGS.find(r => r.id === slug(name))).map(r =>
-        `<option value="${esc(r.id)}" ${r.id === sel ? "selected" : ""}>${esc(label(r))}</option>`).join("")}</optgroup>`).join("");
+  // Replaces the built-in price list with the Google Sheet tab, when one is set.
+  async function loadStringingPrices() {
+    if (!CFG.stringingSheetUrl) return;
+    try {
+      const res = await fetch(CFG.stringingSheetUrl, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const rows = parseCsv(await res.text());
+      const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
+      const [ct, cs, ci, cg, cp, cn, ch] = ["type", "section", "item", "gauges", "price", "note", "shop id"].map(n => head.indexOf(n));
+      if (ci < 0 || cp < 0) throw new Error("the sheet needs Item and Price columns");
+      const cell = (r, i) => (i >= 0 ? (r[i] || "").trim() : "");
+      const num = s => { const n = parseFloat(s.replace(/[^0-9.]/g, "")); return isNaN(n) ? null : n; };
+      const bucket = (list, name) => list.find(g => g.name === name) || list[list.push({ name, items: [] }) - 1];
+      const data = { updated: "", bringYourOwn: SP.bringYourOwn, delivery: SP.delivery, groups: [], extras: [] };
+      rows.forEach(r => {
+        const item = cell(r, ci), price = cell(r, cp), type = cell(r, ct).toLowerCase() || "string";
+        if (!item) return;
+        if (type === "fee") {
+          const n = num(price);
+          if (n == null) return;
+          if (/deliver/i.test(item)) data.delivery = n;
+          else if (/own/i.test(item)) data.bringYourOwn = n;
+        } else if (type === "other") {
+          bucket(data.extras, cell(r, cs) || "Other").items.push([item, /^[0-9.]+$/.test(price) ? money(+price) : price]);
+        } else {
+          const n = num(price);
+          if (n == null) return;
+          const gauges = cell(r, cg).split(",").map(s => s.trim()).filter(Boolean);
+          bucket(data.groups, cell(r, cs) || "Strings").items.push([item, gauges, n, cell(r, ch), cell(r, cn)]);
+        }
+      });
+      if (!data.groups.length) throw new Error("no string rows found");
+      setStringing(data);
+      const page = location.hash.replace(/^#\/?/, "").split("?")[0];
+      if (page === "prices" || page.startsWith("p/") || (page === "stringing" && !formTouched)) route();
+    } catch (e) {
+      console.warn("Stringing price sheet could not be loaded:", e);
+    }
+  }
+
+  // ---------- price list page ----------
+  function renderPrices() {
     const priceRows = SP.groups.map(g => `
       <section class="pl-group" data-group>
         <h3>${esc(g.name)}</h3>
-        ${g.items.map(([name]) => RESTRINGS.find(r => r.id === slug(name))).map(r => `
-          <button type="button" class="pl-row" data-pick="${esc(r.id)}" data-text="${esc((r.name + " " + g.name).toLowerCase())}">
-            <span class="pl-name">${esc(r.name)}${r.note ? ` <em>${esc(r.note)}</em>` : ""}<small>${esc(r.gauges.join(", "))}</small></span>
+        ${groupItems(g).map(r => `
+          <a class="pl-row" href="#/stringing?string=${encodeURIComponent(r.id)}" data-text="${esc((r.name + " " + g.name).toLowerCase())}">
+            <span class="pl-name">${esc(r.name)}${r.note ? ` <em>${esc(r.note)}</em>` : ""}${r.gauges.length ? `<small>${esc(r.gauges.join(", "))}</small>` : ""}</span>
             <span class="pl-price">${esc(money(r.price))}</span>
-          </button>`).join("")}
+          </a>`).join("")}
       </section>`).join("");
     const extraRows = (SP.extras || []).map(g => `
       <section class="pl-group">
@@ -290,8 +334,46 @@
 
     view.innerHTML = `
       <div class="form-page">
-        <h1>Racket stringing</h1>
-        <p>Prices are per racket and include the string and labour. Fill in the form and tap send — WhatsApp opens with your order written out, and we'll reply to confirm drop-off and timing. <a href="#/stringing" id="to-prices">See the full price list</a>.</p>
+        <h1>Restringing price list</h1>
+        <p>Prices are per racket and include the string and labour. Tap a string to book a restring with it.${SP.updated ? ` Updated ${esc(SP.updated)}.` : ""}</p>
+        <a class="btn btn-wa" href="#/stringing">Book a stringing</a>
+        <section class="pricelist">
+          <div class="pl-group">
+            <div class="pl-row static"><span class="pl-name">Bring your own string<small>labour only</small></span><span class="pl-price">${esc(money(SP.bringYourOwn))}</span></div>
+            <div class="pl-row static"><span class="pl-name">Delivery<small>pick-up and drop-off</small></span><span class="pl-price">${esc(money(SP.delivery))}</span></div>
+          </div>
+          <input class="search" id="pl-q" type="search" placeholder="Search strings…" aria-label="Search the price list">
+          ${priceRows}
+          <p class="empty" id="pl-empty" hidden>No string matches that search. Message us — we may be able to get it.</p>
+          ${extraRows}
+        </section>
+      </div>`;
+
+    document.getElementById("pl-q").addEventListener("input", e => {
+      const q = e.target.value.trim().toLowerCase();
+      let shown = 0;
+      view.querySelectorAll("[data-group]").forEach(g => {
+        let n = 0;
+        g.querySelectorAll("[data-text]").forEach(row => { const hit = !q || row.dataset.text.includes(q); row.hidden = !hit; if (hit) n++; });
+        g.hidden = !n;
+        shown += n;
+      });
+      document.getElementById("pl-empty").hidden = shown > 0;
+    });
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- stringing booking form ----------
+  function renderStringing(params) {
+    const pre = (restringFor(params.get("string")) || RESTRINGS.find(r => r.id === params.get("string")) || {}).id || "";
+    const label = r => `${r.name}${r.note ? ` (${r.note})` : ""} — ${money(r.price)}`;
+    const stringOptions = sel => SP.groups.map(g => `<optgroup label="${esc(g.name)}">${
+      groupItems(g).map(r => `<option value="${esc(r.id)}" ${r.id === sel ? "selected" : ""}>${esc(label(r))}</option>`).join("")}</optgroup>`).join("");
+
+    view.innerHTML = `
+      <div class="form-page">
+        <h1>Book a stringing</h1>
+        <p>Prices are per racket and include the string and labour. Fill in the form and tap send — WhatsApp opens with your order written out, and we'll reply to confirm drop-off and timing. <a href="#/prices">See the full price list</a>.</p>
         <form class="panel" id="sform">
           <div class="field"><label for="f-name">Your name</label><input id="f-name" autocomplete="name" required></div>
           <div class="field"><label for="f-racket">Racket <span class="hint">(brand and model)</span></label><input id="f-racket" placeholder="e.g. Babolat Pure Aero 100" required></div>
@@ -321,30 +403,18 @@
           <div class="estimate" id="f-estimate" hidden></div>
           <button class="btn btn-wa btn-block" type="submit">Send order on WhatsApp</button>
         </form>
-
-        <section class="pricelist" id="prices">
-          <h2>Restringing price list</h2>
-          <p class="note">Per racket, string and labour included. Tap a string to put it in the form.${SP.updated ? ` Updated ${esc(SP.updated)}.` : ""}</p>
-          <div class="pl-group">
-            <div class="pl-row static"><span class="pl-name">Bring your own string<small>labour only</small></span><span class="pl-price">${esc(money(SP.bringYourOwn))}</span></div>
-            <div class="pl-row static"><span class="pl-name">Delivery<small>pick-up and drop-off</small></span><span class="pl-price">${esc(money(SP.delivery))}</span></div>
-          </div>
-          <input class="search" id="pl-q" type="search" placeholder="Search strings…" aria-label="Search the price list">
-          ${priceRows}
-          <p class="empty" id="pl-empty" hidden>No string matches that search. Message us — we may be able to get it.</p>
-          ${extraRows}
-        </section>
       </div>`;
 
     const $ = id => document.getElementById(id);
     const strSel = $("f-string");
     const chosen = () => RESTRINGS.find(r => r.id === strSel.value);
+    formTouched = false;
+    $("sform").addEventListener("input", () => { formTouched = true; });
 
     function drawString() {
       const r = chosen();
-      const many = r && r.gauges.length > 1;
-      $("f-gauge-wrap").hidden = !r;
-      if (r) $("f-gauge").innerHTML = (many ? `<option value="">Any</option>` : "") + r.gauges.map(g => `<option>${esc(g)}</option>`).join("");
+      $("f-gauge-wrap").hidden = !r || !r.gauges.length;
+      if (r) $("f-gauge").innerHTML = (r.gauges.length > 1 ? `<option value="">Any</option>` : "") + r.gauges.map(g => `<option>${esc(g)}</option>`).join("");
       $("f-own-wrap").hidden = strSel.value !== "__own";
       drawEstimate();
     }
@@ -366,26 +436,6 @@
     $("f-delivery").addEventListener("change", drawEstimate);
     $("f-hybrid").addEventListener("change", e => { $("f-cross-wrap").hidden = !e.target.checked; drawEstimate(); });
     drawString();
-
-    $("to-prices").addEventListener("click", e => { e.preventDefault(); $("prices").scrollIntoView({ behavior: "smooth" }); });
-    $("prices").addEventListener("click", e => {
-      const b = e.target.closest("[data-pick]");
-      if (!b) return;
-      strSel.value = b.dataset.pick;
-      drawString();
-      $("sform").scrollIntoView({ behavior: "smooth" });
-    });
-    $("pl-q").addEventListener("input", e => {
-      const q = e.target.value.trim().toLowerCase();
-      let shown = 0;
-      document.querySelectorAll("#prices [data-group]").forEach(g => {
-        let n = 0;
-        g.querySelectorAll("[data-pick]").forEach(row => { const hit = !q || row.dataset.text.includes(q); row.hidden = !hit; if (hit) n++; });
-        g.hidden = !n;
-        shown += n;
-      });
-      $("pl-empty").hidden = shown > 0;
-    });
 
     const stringLabel = (value, own) => {
       if (value === "__own") return "Bringing my own" + (own ? ` (${own})` : "");
@@ -429,9 +479,10 @@
     onCatalogue = false;
     if (parts[0] === "p" && parts[1]) renderProduct(decodeURIComponent(parts[1]));
     else if (parts[0] === "stringing") renderStringing(new URLSearchParams(query));
+    else if (parts[0] === "prices") renderPrices();
     else { onCatalogue = true; renderCatalogue(); }
     document.querySelectorAll("[data-nav]").forEach(a =>
-      a.classList.toggle("active", a.dataset.nav === (parts[0] === "stringing" ? "stringing" : "shop")));
+      a.classList.toggle("active", a.dataset.nav === (["stringing", "prices"].includes(parts[0]) ? parts[0] : "shop")));
   }
 
   document.getElementById("brand-name").textContent = CFG.businessName;
@@ -441,4 +492,5 @@
   window.addEventListener("hashchange", route);
   route();
   loadStock();
+  loadStringingPrices();
 })();

@@ -12,6 +12,10 @@ window.SHOP_CONFIG = {
   // Stock sheet: the "Publish to web" CSV link of your Google Sheet. Leave empty to show no stock info.
   stockSheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSUh1E53pmu_AyphlJfeaRos0FAt2A1gMOyMnIaPf3eB9UkSilqq0lCgUhD3OdOL_8ISvqzWEiwKiBR/pub?gid=530926882&single=true&output=csv",
 
+  // Restringing prices: the "Publish to web" CSV link of the stringing tab in your Google Sheet.
+  // Leave empty to use the built-in list in data/stringing.js.
+  stringingSheetUrl: "",
+
   // Show "Only N left" when the quantity is at or below this number. Set to 0 to never show numbers.
   lowStockThreshold: 3,
 };
