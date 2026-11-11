@@ -109,7 +109,9 @@
       (!q || `${p.title} ${p.vendor} ${p.type}`.toLowerCase().includes(q)));
     if (state.sort === "featured") {
       const rank = p => (p.featured == null ? Infinity : p.featured);
-      list = [...list].sort((a, b) => (rank(a) === rank(b) ? 0 : rank(a) - rank(b)));
+      // After the featured ones: tennis strings, then pickleball paddles, then everything else.
+      const group = p => { const i = ["Tennis Strings", "Pickleball Paddles"].indexOf(p.type); return i < 0 ? 9 : i; };
+      list = [...list].sort((a, b) => (rank(a) === rank(b) ? group(a) - group(b) : rank(a) - rank(b)));
     }
     if (state.sort === "low") list = [...list].sort((a, b) => minPrice(a) - minPrice(b));
     if (state.sort === "high") list = [...list].sort((a, b) => (minPrice(b) === Infinity ? -1 : minPrice(b)) - (minPrice(a) === Infinity ? -1 : minPrice(a)));
@@ -139,7 +141,7 @@
     const top = state.sort === "featured" ? list.filter(p => p.featured != null) : [];
     const cards = top.length && top.length < list.length
       ? `<h2 class="grid-head">Featured</h2>${top.map(cardHtml).join("")}
-         <h2 class="grid-head grid-head-rest">More products</h2>${list.slice(top.length).map(cardHtml).join("")}`
+         <h2 class="grid-head grid-head-rest">All products</h2>${list.slice(top.length).map(cardHtml).join("")}`
       : list.map(cardHtml).join("");
     document.getElementById("grid").innerHTML = list.length
       ? cards
