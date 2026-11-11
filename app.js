@@ -54,12 +54,17 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
       const rows = parseCsv(await res.text());
       const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
-      const [ci, cq, ca, cp] = ["id", "quantity", "available", "price"].map(n => head.indexOf(n));
+      const [ci, cq, ca, cp, cf] = ["id", "quantity", "available", "price", "featured"].map(n => head.indexOf(n));
       if (ci < 0) throw new Error("the sheet has no ID column");
       const byId = new Map(rows.map(r => [(r[ci] || "").trim(), r]));
+      PRODUCTS.forEach(p => { p.featured = null; });
       PRODUCTS.forEach(p => p.variants.forEach(v => {
         const r = byId.get(v.id);
         if (!r) return;
+        // Featured: a number (1 shows first) or "yes" on any one row of the product.
+        const f = cf >= 0 ? (r[cf] || "").trim().toLowerCase() : "";
+        const rank = f !== "" && !isNaN(+f) ? +f : ["yes", "y", "true", "x"].includes(f) ? 1e6 : null;
+        if (rank !== null && (p.featured === null || rank < p.featured)) p.featured = rank;
         const q = cq >= 0 ? (r[cq] || "").trim() : "";
         const a = ca >= 0 ? (r[ca] || "").trim().toLowerCase() : "";
         v.stock = {
@@ -102,6 +107,10 @@
     let list = PRODUCTS.filter(p =>
       (state.cat === "All" || p.type === state.cat) &&
       (!q || `${p.title} ${p.vendor} ${p.type}`.toLowerCase().includes(q)));
+    if (state.sort === "featured") {
+      const rank = p => (p.featured == null ? Infinity : p.featured);
+      list = [...list].sort((a, b) => (rank(a) === rank(b) ? 0 : rank(a) - rank(b)));
+    }
     if (state.sort === "low") list = [...list].sort((a, b) => minPrice(a) - minPrice(b));
     if (state.sort === "high") list = [...list].sort((a, b) => (minPrice(b) === Infinity ? -1 : minPrice(b)) - (minPrice(a) === Infinity ? -1 : minPrice(a)));
     if (state.sort === "az") list = [...list].sort((a, b) => a.title.localeCompare(b.title));

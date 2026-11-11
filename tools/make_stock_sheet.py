@@ -15,11 +15,11 @@ products = json.loads(text[text.index("["):text.rindex(";")])
 out = ROOT / "stock-sheet.csv"
 with open(out, "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
-    w.writerow(["ID", "Category", "Product", "Option", "Price", "Quantity", "Available"])
+    w.writerow(["ID", "Category", "Product", "Option", "Price", "Quantity", "Available", "Featured"])
     n = 0
     for p in sorted(products, key=lambda p: (p["type"], p["title"].lower())):
         for v in p["variants"]:
             price = int(v["price"]) if v["price"] == int(v["price"]) else v["price"]
-            w.writerow([v["id"], p["type"], p["title"], " / ".join(v["o"]), price, "", "yes"])
+            w.writerow([v["id"], p["type"], p["title"], " / ".join(v["o"]), price, "", "yes", ""])
             n += 1
 print(f"Wrote {n} rows to {out}")
