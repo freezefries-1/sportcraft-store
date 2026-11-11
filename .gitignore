@@ -1,0 +1,7 @@
+# Private — never publish (contains cost prices)
+products.csv
+
+# Upload bundle and local clutter
+sportcraft-site.zip
+.DS_Store
+.claude/
