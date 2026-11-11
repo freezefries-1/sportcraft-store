@@ -2,7 +2,7 @@
 window.PRODUCTS = [
  {
   "handle": "rpm-jade",
-  "title": "RPM Jade 14mm & 16mm Pickleball Paddle",
+  "title": "RPM Jade Elongated 14mm & 16mm Pickleball Paddle",
   "vendor": "RPM",
   "type": "Pickleball Paddles",
   "options": [
@@ -29,7 +29,7 @@ window.PRODUCTS = [
   "images": [
    "images/RPMJade1.webp"
   ],
-  "html": "<p>Meet the <strong>RPM Jade</strong>, RPM's full-foam paddle built for players who want heavy spin and lively power without giving up feel.</p><p>Its silicon carbide hitting surface is made to grip the ball for topspin drives, rolls and sharp angles, and to keep that grit for longer. Underneath, a floating foam core and carbon layup give a responsive, stable hit across the face.</p><p><strong>14mm</strong> is the firmer, faster option, with a crisper pop for quick hands and counters.<br><strong>16mm</strong> holds the ball a little longer, for a softer, steadier feel on blocks, resets and dinks.</p><p>✅ Silicon carbide surface for long-lasting spin<br>✅ Full-foam core construction<br>✅ Available in 14mm and 16mm<br>✅ USA Pickleball approved</p>",
+  "html": "<p>Meet the <strong>RPM Jade Elongated</strong>, RPM's full-foam paddle built for players who want heavy spin and lively power without giving up feel. The elongated shape (16.5in x 7.5in) adds reach and leverage for attacking play.</p><p>Its silicon carbide hitting surface is made to grip the ball for topspin drives, rolls and sharp angles, and to keep that grit for longer. Underneath, a floating foam core and carbon layup give a responsive, stable hit across the face.</p><p><strong>14mm</strong> is the firmer, faster option, with a crisper pop for quick hands and counters.<br><strong>16mm</strong> holds the ball a little longer, for a softer, steadier feel on blocks, resets and dinks.</p><p>✅ Silicon carbide surface for long-lasting spin<br>✅ Full-foam core construction<br>✅ Elongated shape for extra reach<br>✅ Available in 14mm and 16mm<br>✅ USA Pickleball approved</p>",
   "preloved": false
  },
  {
