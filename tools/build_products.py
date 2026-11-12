@@ -17,6 +17,9 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "products.csv"
 OUT = ROOT / "data" / "products.js"
 
+# Products taken off the site. Add a handle here to remove one.
+REMOVED = {"mariah-scarey-drives-cotton-t-shirt"}
+
 ALLOWED = {"p", "br", "strong", "b", "em", "i", "ul", "ol", "li", "h2", "h3", "h4"}
 SKIP_CONTENT = {"script", "style", "iframe"}
 
@@ -85,6 +88,8 @@ def main():
     for handle, rs in groups.items():
         head = rs[0]
         if head.get("Status", "active") != "active":
+            continue
+        if handle in REMOVED:
             continue
         names = [head.get(f"Option{i} Name", "").strip() for i in (1, 2, 3)]
         names = [n for n in names if n]

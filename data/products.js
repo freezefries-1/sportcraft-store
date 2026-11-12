@@ -1475,60 +1475,6 @@ window.PRODUCTS = [
   "html": "<p>A cult favourite among players in the know, Poly Star Classic is loved for its unique combination of comfort, power, and exceptional feel — rare qualities in a polyester string.</p>\n<p>Known for its soft response and lively performance, Poly Star Classic offers impressive ball pocketing and easy power while still maintaining enough control for confident shot-making.</p>\n<p>✅ Soft &amp; comfortable feel<br> ✅ Excellent power &amp; pocketing<br> ✅ Unique lively response<br> ✅ Great for players seeking comfort in a poly</p>\n<p>Perfect for players who want a softer polyester with outstanding feel and effortless depth.</p>"
  },
  {
-  "handle": "mariah-scarey-drives-cotton-t-shirt",
-  "title": "Mariah Scarey Drives Cotton T-Shirt",
-  "vendor": "MSD",
-  "type": "Apparel",
-  "preloved": false,
-  "options": [
-   "Size"
-  ],
-  "variants": [
-   {
-    "id": "mariah-scarey-drives-cotton-t-shirt|Small",
-    "o": [
-     "Small"
-    ],
-    "price": 16.5,
-    "img": ""
-   },
-   {
-    "id": "mariah-scarey-drives-cotton-t-shirt|Medium",
-    "o": [
-     "Medium"
-    ],
-    "price": 16.5,
-    "img": ""
-   },
-   {
-    "id": "mariah-scarey-drives-cotton-t-shirt|Large",
-    "o": [
-     "Large"
-    ],
-    "price": 16.5,
-    "img": ""
-   },
-   {
-    "id": "mariah-scarey-drives-cotton-t-shirt|Extra Large",
-    "o": [
-     "Extra Large"
-    ],
-    "price": 16.5,
-    "img": ""
-   }
-  ],
-  "images": [
-   "images/mariah_tshirt_mockup_1.png",
-   "images/mockup_2.png",
-   "images/mariah_tshirt_mockup_2.png",
-   "images/mockup_1.png",
-   "images/mockup_3.png",
-   "images/mariah_tshirt_mockup_3.png",
-   "images/WhatsAppImage2026-04-16at15.07.22.jpg"
-  ],
-  "html": "<p>👻 Join the chaos.</p>\n<p>Mariah Scarey Drives started as a joke team name for a tournament… and somehow became a group of friends who drill, compete, support each other, and occasionally make questionable pickleball decisions 😌</p>\n<p>Want to be part of the journey?</p>\n<p>Support us as we continue chasing medals, drilling too much, and trying to become better players — one dink, drive and chaotic kitchen battle at a time.</p>\n<p>Introducing the official Mariah Scarey Drives cotton tee 💙</p>\n<p>Soft. Comfortable. Made for tournaments, drills, coffee runs and post-game makan.</p>\n<p>Because chaos lives at the NVZ.</p>"
- },
- {
   "handle": "tuff-max2-pickleball-2in1-backpack-duffle-bag",
   "title": "TUFF MAX 2 2in1 Backpack Duffle Pickleball Bag",
   "vendor": "TUFF",
