@@ -312,7 +312,8 @@
         if (type === "fee") {
           const n = num(price);
           if (n == null) return;
-          if (/deliver/i.test(item)) data.delivery = n;
+          if (/express/i.test(item)) data.express = { name: item, price: n, note: cell(r, cn) };
+          else if (/deliver/i.test(item)) data.delivery = n;
           else if (/own/i.test(item)) data.bringYourOwn = n;
         } else if (type === "other") {
           bucket(data.extras, cell(r, cs) || "Other").items.push([item, /^[0-9.]+$/.test(price) ? money(+price) : price]);
@@ -358,6 +359,7 @@
           <div class="pl-group">
             <div class="pl-row static"><span class="pl-name">Bring your own string<small>labour only</small></span><span class="pl-price">${esc(money(SP.bringYourOwn))}</span></div>
             <div class="pl-row static"><span class="pl-name">Delivery<small>pick-up and drop-off</small></span><span class="pl-price">${esc(money(SP.delivery))}</span></div>
+            ${SP.express ? `<div class="pl-row static"><span class="pl-name">${esc(SP.express.name)}${SP.express.note ? `<small>${esc(SP.express.note)}</small>` : ""}</span><span class="pl-price">${esc(money(SP.express.price))}</span></div>` : ""}
           </div>
           <input class="search" id="pl-q" type="search" placeholder="Search strings…" aria-label="Search the price list">
           ${priceRows}
@@ -416,6 +418,7 @@
           </div>
           <div class="field"><label for="f-qty">Number of rackets</label><input id="f-qty" type="number" inputmode="numeric" min="1" max="20" value="1" required></div>
           <label class="check"><input type="checkbox" id="f-delivery"> Pick-up and drop-off delivery (+${esc(money(SP.delivery))})</label>
+          ${SP.express ? `<label class="check"><input type="checkbox" id="f-express"> ${esc(SP.express.name)}${SP.express.note ? ` — ${esc(SP.express.note)}` : ""} (+${esc(money(SP.express.price))} per racket)</label>` : ""}
           <div class="field"><label for="f-notes">Notes <span class="hint">(optional)</span></label><textarea id="f-notes" placeholder="String colour, when you need it by, grip changes, anything else"></textarea></div>
           <div class="estimate" id="f-estimate" hidden></div>
           <button class="btn btn-wa btn-block" type="submit">Send order on WhatsApp</button>
@@ -440,17 +443,19 @@
       const box = $("f-estimate"), r = chosen();
       const qty = Math.max(1, +$("f-qty").value || 1);
       const delivery = $("f-delivery").checked ? SP.delivery : 0;
+      const express = $("f-express") && $("f-express").checked ? SP.express.price : 0;
       const hybrid = $("f-hybrid").checked;
       const per = strSel.value === "__own" ? SP.bringYourOwn : r ? r.price : null;
       box.hidden = per == null && !hybrid;
       if (per == null || hybrid) box.textContent = "We'll confirm the price for this setup on WhatsApp.";
-      else box.textContent = `Estimated total: ${money(per * qty + delivery)}` +
-        ` (${qty} × ${money(per)}${delivery ? ` + ${money(delivery)} delivery` : ""})`;
+      else box.textContent = `Estimated total: ${money((per + express) * qty + delivery)}` +
+        ` (${qty} × ${money(per)}${express ? ` + ${qty} × ${money(express)} express` : ""}${delivery ? ` + ${money(delivery)} delivery` : ""})`;
     }
 
     strSel.addEventListener("change", drawString);
     $("f-qty").addEventListener("input", drawEstimate);
     $("f-delivery").addEventListener("change", drawEstimate);
+    if ($("f-express")) $("f-express").addEventListener("change", drawEstimate);
     $("f-hybrid").addEventListener("change", e => { $("f-cross-wrap").hidden = !e.target.checked; drawEstimate(); });
     drawString();
 
@@ -478,6 +483,7 @@
         `• Tension: ${crosses && crosses !== mains ? `${mains} lbs mains / ${crosses} lbs crosses` : `${mains} lbs`}`,
         `• Rackets: ${$("f-qty").value}`,
         $("f-delivery").checked ? `• Delivery: pick-up and drop-off` : null,
+        $("f-express") && $("f-express").checked ? `• ${SP.express.name}: yes` : null,
         $("f-notes").value.trim() ? `• Notes: ${$("f-notes").value.trim()}` : null,
         !est.hidden && est.textContent.startsWith("Estimated") ? `• ${est.textContent}` : null,
       ].filter(Boolean);
